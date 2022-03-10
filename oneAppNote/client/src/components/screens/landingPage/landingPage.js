@@ -8,7 +8,7 @@ const landingPage = () => {
        <Row>
             <div className="introText">
                 <div>
-                    <h1 className='title'>Welcome to the  OneAppNotes.</h1>
+                    <h1 className='title'>Welcome to the  OneAppNote.</h1>
                     <p className='subtitle'>Safe place for all your Notes.</p>
                 </div>
                 <div className='buttonContainer'>

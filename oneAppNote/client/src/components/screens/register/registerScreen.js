@@ -1,59 +1,58 @@
-import React, { useState } from "react";
-import MainScreen from "../../components/mainScreen";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import "../register/registerScreen.css";
-import ErrorMessage from "../errorMessage";
 import { useDispatch, useSelector } from "react-redux";
-import { getRegister } from "../../redux/actions/action";
-import Loading from "../loading";
+import { Link, useNavigate } from "react-router-dom";
+import Loading from "../../loading";
+import ErrorMessage from "../../errorMessage";
+import { register } from "../../../redux/actions/userAction";
+import MainScreen from "../../mainScreen";
+import "./registerScreen.css";
 
 function RegisterScreen() {
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [pic, setPic] = useState(
-    "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
-  );
+  const [confirmpassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState(null);
-  const [picmessage, setPicMessage] = useState(null);
 
   const dispatch = useDispatch();
-  const registerData = useSelector((state)=>state.registerReducer);
-  const {loading, error} = registerData;
-//   console.log(registerData);
-//   console.log(error);
+
+  const userRegister = useSelector((state) => state.userRegister);
+  const { loading, error, userInfo } = userRegister;
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [userInfo]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
+
+    if (password !== confirmpassword) {
       setMessage("Passwords do not match");
-    } else {
-      setMessage(null);
-      const data = {
-        name, email, password, confirmPassword
-    }
-    dispatch(getRegister(data));
-    console.log(name, email, password, confirmPassword);
-    }
+    } else dispatch(register(name, email, password));
   };
+
   return (
     <MainScreen title="REGISTER">
       <div className="loginContainer">
-      {error && <ErrorMessage variant="danger">{error}</ErrorMessage>} 
-        {loading && <Loading/>}
+        {error && <ErrorMessage variant="danger">{error}</ErrorMessage>}
         {message && <ErrorMessage variant="danger">{message}</ErrorMessage>}
+        {loading && <Loading />}
         <Form onSubmit={submitHandler}>
           <Form.Group controlId="name">
             <Form.Label>Name</Form.Label>
             <Form.Control
-              type="text"
+              type="name"
               value={name}
-              placeholder="Enter Full Name"
+              placeholder="Enter name"
               onChange={(e) => setName(e.target.value)}
             />
           </Form.Group>
+
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
             <Form.Control
@@ -63,31 +62,24 @@ function RegisterScreen() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Group>
+
           <Form.Group controlId="formBasicPassword">
             <Form.Label>Password</Form.Label>
             <Form.Control
               type="password"
               value={password}
-              placeholder="Enter you Password"
+              placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
             />
           </Form.Group>
-          <Form.Group controlId="formBasicConfirmPassword">
+
+          <Form.Group controlId="confirmPassword">
             <Form.Label>Confirm Password</Form.Label>
             <Form.Control
               type="password"
-              value={confirmPassword}
-              placeholder="Enter you Confirm Password"
+              value={confirmpassword}
+              placeholder="Confirm Password"
               onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group controlId="pic">
-            <Form.Label>Profile Picture</Form.Label>
-            <Form.File
-              id="custom-file"
-              type="image/png"
-              label="Upload Profile Picture"
-              custom
             />
           </Form.Group>
           <Button variant="primary" type="submit">
